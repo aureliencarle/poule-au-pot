@@ -3,6 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+
 Bienvenu dans la Poule-au-Pot !
 ===============================
 
@@ -13,7 +14,11 @@ Bienvenu dans la Poule-au-Pot !
    raspberry/tor_server.rst
    raspberry/nginx_server.rst
 
+.. toctree::
+   :maxdepth: 2
+   :caption: OTHER:
    schema/containers.rst
+   autodoc
 
 ..
    Indices and tables
