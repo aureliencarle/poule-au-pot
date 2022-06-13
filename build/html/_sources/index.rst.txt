@@ -16,9 +16,15 @@ Bienvenu dans la Poule-au-Pot !
 
 .. toctree::
    :maxdepth: 2
-   :caption: OTHER:
+   :caption: BOITE À MIRACLES:
+
+   boiteam/git.rst
+
+.. toctree::
+   :maxdepth: 2
+   :caption: AUTRES:
+
    schema/containers.rst
-   autodoc
 
 ..
    Indices and tables
