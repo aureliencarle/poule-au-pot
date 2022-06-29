@@ -60,6 +60,9 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Quelques petites commandes prêtes à l’emploi</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#deplacer-un-tag">Déplacer un tag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#passer-temporairement-a-un-autre-commit">Passer temporairement à un autre commit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#supprimer-definitivement-les-commits-non-publies">Supprimer définitivement les commits non publiés</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#undo-published-commits-with-new-commits-sorcellerie">Undo published commits with new commits (Sorcellerie)</a></li>
 </ul>
 </li>
 </ul>
@@ -104,6 +107,61 @@ Il faudra se munir du tag que l’on veut bouger (<code class="docutils literal 
 <span class="go">git push origin &lt;tagname&gt;             # push the new local tag to the remote</span>
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Les 3 paragraphes suivants sont des traductions des méthodes porposées par les utilisateurs StackOverflow Cascabel et Joel Hoisko.</p>
+</div>
+</section>
+<section id="passer-temporairement-a-un-autre-commit">
+<h2>Passer temporairement à un autre commit<a class="headerlink" href="#passer-temporairement-a-un-autre-commit" title="Lien permanent vers ce titre"></a></h2>
+<p>Si on veut temporairement revenir en arrière, faire des folies, puis revenir là où vous êtes, tout ce que vous avez à faire est de vérifier le commit désiré :</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">git checkout 0d1d7fc32 # This will detach your HEAD, leave you with no branch checked out</span>
+</pre></div>
+</div>
+<p>Ou si on veut faire des commits pendant qu’on y est, go créer une nouvelle branche <cite>old-state</cite> par exemple :</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">git checkout -b old-state 0d1d7fc32</span>
+</pre></div>
+</div>
+</section>
+<section id="supprimer-definitivement-les-commits-non-publies">
+<h2>Supprimer définitivement les commits non publiés<a class="headerlink" href="#supprimer-definitivement-les-commits-non-publies" title="Lien permanent vers ce titre"></a></h2>
+<p>Si, d’un autre côté, on veut vraiment se débarrasser de tout ce qu’on a fait depuis, il y a deux possibilités. La première, si aucun de ces commits n’a été publié, il suffit de réinitialiser :</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">git reset --hard 0d1d7fc32      # This will destroy any local modifications.</span>
+</pre></div>
+</div>
+<p>Autrement, si il y a du travail à conserver :</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">git stash                       # This saves the modifications.</span>
+<span class="go">git reset --hard 0d1d7fc32</span>
+<span class="go">git stash pop                   # Then reapplies that patch after resetting.</span>
+</pre></div>
+</div>
+</section>
+<section id="undo-published-commits-with-new-commits-sorcellerie">
+<h2>Undo published commits with new commits (Sorcellerie)<a class="headerlink" href="#undo-published-commits-with-new-commits-sorcellerie" title="Lien permanent vers ce titre"></a></h2>
+<p>On the other hand, if you’ve published the work, you probably don’t want to reset the branch, since that’s effectively rewriting history. In that case, you could indeed revert the commits. With Git, revert has a very specific meaning: create a commit with the reverse patch to cancel it out. This way you don’t rewrite any history.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp"># </span>This will create three separate revert commits:
+<span class="go">git revert a867b4af 25eee4ca 0766c053</span>
+
+<span class="gp"># </span>It also takes ranges. This will revert the last two commits:
+<span class="go">git revert HEAD~2..HEAD</span>
+
+<span class="gp"># </span>Similarly, you can revert a range of commits using commit hashes <span class="o">(</span>non inclusive of first <span class="nb">hash</span><span class="o">)</span>:
+<span class="go">git revert 0d1d7fc..a867b4a</span>
+
+<span class="gp"># </span>Reverting a merge commit
+<span class="go">git revert -m 1 &lt;merge_commit_sha&gt;</span>
+
+<span class="gp"># </span>To get just one, you could use <span class="sb">`</span>rebase -i<span class="sb">`</span> to squash them afterwards
+<span class="gp"># </span>Or, you could <span class="k">do</span> it manually <span class="o">(</span>be sure to <span class="k">do</span> this at top level of the repo<span class="o">)</span>
+<span class="gp"># </span>get your index and work tree into the desired state, without changing HEAD:
+<span class="go">git checkout 0d1d7fc32 .</span>
+
+<span class="gp"># </span>Then commit. Be sure and write a good message describing what you just did
+<span class="go">git commit</span>
+</pre></div>
+</div>
+<p>The <cite>git-revert</cite> manpage actually covers a lot of this in its description. Another useful link is this git-scm.com section discussing git-revert.
+If you decide you didn’t want to revert after all, you can revert the revert (as described here) or reset back to before the revert (see the previous section).</p>
 </section>
 </section>
 
